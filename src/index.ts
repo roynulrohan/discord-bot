@@ -132,6 +132,7 @@ client.on('messageCreate', async (message) => {
                 metadata: message.channel,
                 autoSelfDeaf: false,
                 spotifyBridge: true,
+                leaveOnEnd: false,
             });
 
         try {
@@ -183,13 +184,8 @@ client.on('messageCreate', async (message) => {
         return void message.channel.send({
             content: `${success ? `✅ | Seeked to ${query}` : `❌ | Something went wrong!`}`,
         });
-    } else if (command == 'bakr') {
-        const says = message.content.replace(prefix + command, '');
-        axios.get(`${bakrApiUrl}/bakr${says ? `/says/${says}` : ''}`, { responseType: 'arraybuffer' }).then((response) => {
-            message.reply({
-                files: [response.data],
-            });
-        });
+    } else if (command == 'h' || command == 'help') {
+        message.reply(`**All commands**\n\n${commands.format()}`);
     } else {
         message.reply({
             content: 'Unknown command!',

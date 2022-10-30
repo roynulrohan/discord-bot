@@ -3,19 +3,27 @@ export class Commands {
 
     constructor() {
         const mCommands = [
-            ['play', ['p']],
-            ['skip', ['fs']],
-            ['stop', ['']],
-            ['queue', ['list']],
-            ['clear', ['']],
-            ['seek', ['']],
+            ['play', ['p'], 'Play a song by search or url'],
+            ['skip', ['fs'], 'Skip current song '],
+            ['stop', [], 'Stop music player'],
+            ['queue', ['list'], 'View all songs in queue'],
+            ['clear', [], 'Clear music queue'],
+            ['seek', [], 'Seek current song to `time`'],
         ];
 
         this.musicCommands = {};
 
         mCommands.forEach((mCommand: any, i) => {
-            this.musicCommands[i] = new Command(mCommand[0], mCommand[1]);
+            this.musicCommands[i] = new Command(mCommand[0], mCommand[1], mCommand[2]);
         });
+    }
+
+    format() {
+        const toReturn = Object.values(this.musicCommands).map((index: any) => {
+            return `**${index.command}${index.alts.length !== 0 ? ` , ${index.alts}` : ''}** - ${index.description}`;
+        });
+
+        return toReturn.join('\n');
     }
 
     isMusicCommand(command: string) {
@@ -56,9 +64,10 @@ export class Commands {
 }
 
 class Command {
-    constructor(command: string, alts: string[]) {
+    constructor(command: string, alts: string[], description: string) {
         this.command = command;
         this.alts = alts;
+        this.description = description;
     }
 
     is(command: string) {
@@ -75,4 +84,5 @@ class Command {
 interface Command {
     command: string;
     alts: string[];
+    description: string;
 }
