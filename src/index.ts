@@ -19,6 +19,8 @@ const prefix = '-';
 const bakrApiUrl = 'https://bakraas.com/';
 const commands = new Commands();
 
+const denyMessages = ['Fuck off', 'Fuck you', 'No', "Nah don't think so", 'Lol fuck off'];
+
 client.on('ready', async () => {
     console.log(`${client.user?.tag} is online!`);
 
@@ -103,6 +105,11 @@ client.on('messageCreate', async (message) => {
     const command = message.content.replace(prefix, '').split(' ')[0].trim();
 
     if (commands.isMusicCommand(command)) {
+        if (message.member?.id === '476064362537156619') {
+            message.reply({ content: denyMessages[Math.random() * denyMessages.length] });
+            return;
+        }
+
         if (!(message.member instanceof GuildMember) || !message.member.voice.channel) {
             message.reply({ content: 'You are not in a voice channel!' });
             return;
