@@ -104,12 +104,14 @@ client.on('messageCreate', async (message) => {
 
     const command = message.content.replace(prefix, '').split(' ')[0].trim();
 
-    if (commands.isMusicCommand(command)) {
-        if (message.member?.id === '476064362537156619') {
-            message.reply({ content: denyMessages[Math.random() * denyMessages.length] });
-            return;
-        }
+    const rand = Math.floor(Math.random() * 10);
 
+    if (message.member?.id === '476064362537156619' && rand === 5) {
+        message.reply({ content: denyMessages[Math.floor(Math.random() * denyMessages.length)] });
+        return;
+    }
+
+    if (commands.isMusicCommand(command)) {
         if (!(message.member instanceof GuildMember) || !message.member.voice.channel) {
             message.reply({ content: 'You are not in a voice channel!' });
             return;
