@@ -9,6 +9,7 @@ export class Commands {
             ['queue', ['list'], 'View all songs in queue'],
             ['clear', [], 'Clear music queue'],
             ['seek', [], 'Seek current song to `time`'],
+            ['pause', [], 'Pause the player`'],
         ];
 
         this.musicCommands = {};
@@ -60,6 +61,10 @@ export class Commands {
 
     isSeek(command: string) {
         return this.musicCommands[5].is(command);
+    }
+
+    isPause(command: string) {
+        return this.musicCommands[6].is(command);
     }
 }
 
