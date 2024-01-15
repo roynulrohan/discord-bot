@@ -82,15 +82,37 @@ export default {
             });
         }
 
-        const song = result.tracks[0];
-        queue.addTrack(song);
+        if (result.tracks.length > 1) {
+            playlist = result._data.playlist;
 
-        embed = getPlaySongEmbed(
-            interaction.member.voice.channel.name,
-            queue.isPlaying(),
-            song,
-            checkMemberName(interaction.member.nickname, interaction.member.user.username)
-        );
+            await queue.addTrack(playlist);
+
+            if (!queue.isPlaying()) {
+                queueController.anyPlaylistOngoing = true;
+
+                embed = getPlayPlaylistEmbed(
+                    playlist.title,
+                    playlist.tracks.length,
+                    playlist.url,
+                    playlist.author.name,
+                    1,
+                    checkMemberName(interaction.member.nickname, interaction.member.user.username),
+                    playlist.tracks[0].raw
+                );
+            } else {
+                embed = getPlaylistAddedEmbed(playlist, checkMemberName(interaction.member.nickname, interaction.member.user.username));
+            }
+        } else {
+            const song = result.tracks[0];
+            queue.addTrack(song);
+
+            embed = getPlaySongEmbed(
+                interaction.member.voice.channel.name,
+                queue.isPlaying(),
+                song,
+                checkMemberName(interaction.member.nickname, interaction.member.user.username)
+            );
+        }
 
         await interaction.deferReply();
 
