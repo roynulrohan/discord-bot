@@ -19,43 +19,10 @@ export default {
     description: 'Play a song from YouTube.',
     options: [
         {
-            type: 1,
-            name: 'search',
-            description: 'Searches for a song and plays it.',
-            options: [
-                {
-                    type: 3,
-                    name: 'songname',
-                    description: 'search keywords',
-                    required: true,
-                },
-            ],
-        },
-        {
-            type: 1,
-            name: 'playlist',
-            description: 'Plays a playlist from YouTube',
-            options: [
-                {
-                    type: 3,
-                    name: 'playlisturl',
-                    description: "the playlist's url",
-                    required: true,
-                },
-            ],
-        },
-        {
-            type: 1,
-            name: 'url',
-            description: 'Plays a song from a YouTube Url',
-            options: [
-                {
-                    type: 3,
-                    name: 'songurl',
-                    description: "the song's url",
-                    required: true,
-                },
-            ],
+            type: 3,
+            name: 'song',
+            description: 'search keywords, name, or url',
+            required: true,
         },
     ],
 
@@ -101,123 +68,29 @@ export default {
         let embed;
         let playlist;
 
-        const searchParameters = interaction.options.getSubcommand();
+        const songField = interaction.options.getString('song');
 
-        if (searchParameters == 'url') {
-            const songUrl = interaction.options.getString('songurl');
+        const result = await client.player.search(songField, {
+            requestedBy: interaction.user,
+            searchEngine: QueryType.AUTO,
+        });
 
-            if (!isValidUrl(songUrl)) {
-                return interaction.reply({
-                    content: 'the provided parameter is not a url.',
-                    ephemeral: true,
-                });
-            }
-
-            if (isYoutubePlaylist(songUrl)) {
-                return interaction.reply({
-                    content: `This option does not support playlist links, use /play playlist instead.`,
-                    ephemeral: true,
-                });
-            }
-
-            const result = await client.player.search(songUrl, {
-                requestedBy: interaction.user,
-                searchEngine: QueryType.YOUTUBE_VIDEO,
+        if (result.tracks.length === 0) {
+            return interaction.reply({
+                content: 'No results found on this link!.',
+                ephemeral: true,
             });
-
-            if (result.tracks.length === 0) {
-                return interaction.reply({
-                    content: 'No results found on this link!).',
-                    ephemeral: true,
-                });
-            }
-
-            const song = result.tracks[0];
-            queue.addTrack(song);
-
-            embed = getPlaySongEmbed(
-                interaction.member.voice.channel.name,
-                queue.isPlaying(),
-                song,
-                checkMemberName(interaction.member.nickname, interaction.member.user.username)
-            );
         }
 
-        if (searchParameters == 'search') {
-            const songName = interaction.options.getString('songname');
+        const song = result.tracks[0];
+        queue.addTrack(song);
 
-            const result = await client.player.search(songName, {
-                requestedBy: interaction.user,
-                searchEngine: QueryType.AUTO,
-            });
-
-            if (result.tracks.length === 0) {
-                return interaction.reply({
-                    content: 'No results found.',
-                    ephemeral: true,
-                });
-            }
-
-            const song = result.tracks[0];
-            queue.addTrack(song);
-
-            embed = getPlaySongEmbed(
-                interaction.member.voice.channel.name,
-                queue.isPlaying(),
-                song,
-                checkMemberName(interaction.member.nickname, interaction.member.user.username)
-            );
-        }
-
-        if (searchParameters == 'playlist') {
-            const playlistUrl = interaction.options.getString('playlisturl');
-
-            if (!isValidUrl(playlistUrl)) {
-                return interaction.reply({
-                    content: 'The provided parameter is not a url.',
-                    ephemeral: true,
-                });
-            }
-
-            if (!isYoutubePlaylist(playlistUrl)) {
-                return interaction.reply({
-                    content: 'This option only supports youtube playlist links.',
-                    ephemeral: true,
-                });
-            }
-
-            const result = await client.player.search(playlistUrl, {
-                requestedBy: interaction.user,
-                searchEngine: QueryType.YOUTUBE_PLAYLIST,
-            });
-
-            if (result.tracks.length === 0) {
-                return interaction.reply({
-                    content: 'No results found on this link!.',
-                    ephemeral: true,
-                });
-            }
-
-            playlist = result._data.playlist;
-
-            await queue.addTrack(playlist);
-
-            if (!queue.isPlaying()) {
-                queueController.anyPlaylistOngoing = true;
-
-                embed = getPlayPlaylistEmbed(
-                    playlist.title,
-                    playlist.tracks.length,
-                    playlist.url,
-                    playlist.author.name,
-                    1,
-                    checkMemberName(interaction.member.nickname, interaction.member.user.username),
-                    playlist.tracks[0].raw
-                );
-            } else {
-                embed = getPlaylistAddedEmbed(playlist, checkMemberName(interaction.member.nickname, interaction.member.user.username));
-            }
-        }
+        embed = getPlaySongEmbed(
+            interaction.member.voice.channel.name,
+            queue.isPlaying(),
+            song,
+            checkMemberName(interaction.member.nickname, interaction.member.user.username)
+        );
 
         await interaction.deferReply();
 
@@ -302,10 +175,9 @@ export default {
 
                         setTimeout(async () => {
                             await interaction.deleteReply();
-                            
-                            return
-                        }, 2500);
 
+                            return;
+                        }, 2500);
                     } catch (error) {
                         console.log(
                             `\nError while skip button was pressed on the server: ${interaction.guild.name} / Id: ${interaction.guild.id}. Error: ${error}`
@@ -329,8 +201,8 @@ export default {
 
                             setTimeout(async () => {
                                 await interaction.deleteReply();
-                                
-                                return
+
+                                return;
                             }, 2500);
                         } else {
                             await interaction.reply({
@@ -340,8 +212,8 @@ export default {
 
                             setTimeout(async () => {
                                 await interaction.deleteReply();
-                                
-                                return
+
+                                return;
                             }, 2500);
                         }
                     } catch (error) {
@@ -367,8 +239,8 @@ export default {
 
                             setTimeout(async () => {
                                 await interaction.deleteReply();
-                                
-                                return
+
+                                return;
                             }, 2500);
                         } else {
                             await interaction.reply({
@@ -378,8 +250,8 @@ export default {
 
                             setTimeout(async () => {
                                 await interaction.deleteReply();
-                                
-                                return
+
+                                return;
                             }, 2500);
                         }
                     } catch (error) {
