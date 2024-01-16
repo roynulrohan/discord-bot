@@ -25,7 +25,7 @@ export default class QueueController {
     moveActiveRow(lastTrack = false) {
         const currentReply: Message = this.queueReply[this.currentTrackIndex];
 
-        currentReply.edit({ components: [getDisabledPlayButtonRow()] });
+        currentReply?.edit({ components: [getDisabledPlayButtonRow()] });
 
         if (lastTrack) return;
 
@@ -78,7 +78,7 @@ export default class QueueController {
             }
 
             if (this.anyPlaylistOngoing) {
-                this.playlists[0].reply.edit(
+                this.playlists[0].reply?.edit(
                     getPlayPlaylistEmbed(
                         this.playlists[0].title,
                         this.playlists[0].length,
@@ -102,7 +102,7 @@ export default class QueueController {
                     this.moveActiveRow(true);
 
                     if (!this.stopCommandIssued) {
-                        this.queueReply[this.currentTrackIndex].reply(getQueueEmptyEmbed() as MessageReplyOptions);
+                        this.queueReply[this.currentTrackIndex]?.reply(getQueueEmptyEmbed() as MessageReplyOptions);
                     } else {
                         this.stopCommandIssued = false;
                     }

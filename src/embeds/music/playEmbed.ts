@@ -15,6 +15,7 @@ export function getPlaySongEmbed(channel: string, isPlaying: boolean, song: Trac
     embed.setFooter({ text: `Duration: ${song.duration}\nChannel: #${channel}\nAdded by : @${addedBy}` });
 
     const returnObject: InteractionReplyOptions = {
+        content: `${song.url}`,
         embeds: [embed.data],
         components: !isPlaying ? [buttonRow] : [],
     };
