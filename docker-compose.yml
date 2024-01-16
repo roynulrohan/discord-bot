@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - PORT = ${PORT}
+        - PORT=${PORT}
     environment:
       - TOKEN=${TOKEN}
     ports:
