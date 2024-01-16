@@ -1,19 +1,16 @@
-import { GuildQueue, Playlist, QueryType } from 'discord-player';
-import { Client, ClientUser, CommandInteraction, ComponentType, Guild, GuildMember, InteractionReplyOptions, MessagePayload } from 'discord.js';
-import { getPlayPlaylistEmbed, getPlaySongEmbed, getPlaylistAddedEmbed } from '../../embeds/music/playEmbed.js';
-import skipEmbed from '../../embeds/music/skipEmbed.js';
-import stopEmbed from '../../embeds/music/stopEmbed.js';
-import isYoutubePlaylist from '../../utils/urlTools/isYoutubePlaylist.js';
-import isValidUrl from '../../utils/urlTools/isValidUrl.js';
-import GuildQueueController from '../../controllers/guildQueueController.js';
-import checkMemberName from '../../utils/checkMemberName.js';
-import { getPausedButtonRow, getPlayButtonRow } from '../../embeds/music/buttonRowEmbed.js';
-import pauseEmbed from '../../embeds/music/pauseEmbed.js';
-import resumeEmbed from '../../embeds/music/resumeEmbed.js';
-import isUserConnectedToBotChannel from '../../utils/isUserConnectedToBotChannel.js';
-import CooldownController from '../../controllers/cooldownController.js';
-import { getCooldownEmbed } from '../../embeds/music/exceptionsEmbed.js';
-import assert from 'assert';
+import { GuildNodeCreateOptions, GuildQueue, Playlist, QueryType } from 'discord-player';
+import { Client, CommandInteraction, ComponentType, Guild, GuildMember, InteractionReplyOptions, MessagePayload } from 'discord.js';
+import CooldownController from '../../controllers/cooldownController';
+import GuildQueueController from '../../controllers/guildQueueController';
+import { getPausedButtonRow, getPlayButtonRow } from '../../embeds/music/buttonRowEmbed';
+import { getCooldownEmbed } from '../../embeds/music/exceptionsEmbed';
+import pauseEmbed from '../../embeds/music/pauseEmbed';
+import { getPlaylistAddedEmbed, getPlayPlaylistEmbed, getPlaySongEmbed } from '../../embeds/music/playEmbed';
+import resumeEmbed from '../../embeds/music/resumeEmbed';
+import skipEmbed from '../../embeds/music/skipEmbed';
+import stopEmbed from '../../embeds/music/stopEmbed';
+import checkMemberName from '../../utils/checkMemberName';
+import isUserConnectedToBotChannel from '../../utils/isUserConnectedToBotChannel';
 
 export default {
     name: 'play',
@@ -46,11 +43,12 @@ export default {
         let queue: GuildQueue;
 
         if (!client.player.nodes.has(interaction.guild!)) {
-            queue = client.player.nodes.create(interaction.guild!, {
+            const options: GuildNodeCreateOptions = {
                 leaveOnEnd: false,
                 selfDeaf: false,
-                skipOnNoStream: true,
-            });
+            };
+
+            queue = client.player.nodes.create(interaction.guild!, options);
         } else {
             queue = client.player.nodes.get(interaction.guild!)!;
 
@@ -124,7 +122,7 @@ export default {
             if (!queue.isPlaying()) {
                 await queue.node.play();
 
-                queueController.setTrackMoveEventListener(queue, client);
+                queueController.setTrackMoveEventListener(queue);
             }
 
             const reply = await interaction.followUp(embed);
@@ -226,7 +224,7 @@ export default {
 
                             const currentReply = queueController.queueReply[queueController.currentTrackIndex];
 
-                            currentReply.edit(getPausedButtonRow());
+                            currentReply.edit({ components: [getPausedButtonRow()] });
 
                             await interaction.reply(
                                 pauseEmbed(
@@ -267,7 +265,7 @@ export default {
 
                             const currentReply = queueController.queueReply[queueController.currentTrackIndex];
 
-                            currentReply.edit(getPlayButtonRow(true));
+                            currentReply.edit({ components: [getPlayButtonRow(true)] });
 
                             await interaction.reply(
                                 resumeEmbed(

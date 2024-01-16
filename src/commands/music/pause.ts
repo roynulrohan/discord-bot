@@ -1,9 +1,8 @@
 import { Client, CommandInteraction, GuildMember } from 'discord.js';
-import GuildQueueController from '../../controllers/guildQueueController.js';
-import { getPausedButtonRow } from '../../embeds/music/buttonRowEmbed.js';
-import pauseEmbed from '../../embeds/music/pauseEmbed.js';
-import skipEmbed from '../../embeds/music/skipEmbed.js';
-import checkMemberName from '../../utils/checkMemberName.js';
+import GuildQueueController from '../../controllers/guildQueueController';
+import { getPausedButtonRow } from '../../embeds/music/buttonRowEmbed';
+import pauseEmbed from '../../embeds/music/pauseEmbed';
+import checkMemberName from '../../utils/checkMemberName';
 
 export default {
     name: 'pause',
@@ -36,7 +35,7 @@ export default {
 
             const currentReply = queueController.queueReply[queueController.currentTrackIndex];
 
-            currentReply.edit(getPausedButtonRow());
+            currentReply.edit({ components: [getPausedButtonRow()] });
 
             return await interaction.reply(
                 pauseEmbed(queue.currentTrack?.raw.title!, checkMemberName((interaction.member as GuildMember).nickname!, interaction.member?.user.username!))

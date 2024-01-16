@@ -2,12 +2,12 @@
     "name": "jett-bot",
     "version": "1.0.0",
     "description": "",
-    "main": "src/bot.js",
-    "type": "module",
+    "main": "src/bot.ts",
     "scripts": {
-        "start": "node src/bot.js",
-        "dev": "nodemon src/bot.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "ts-node --files --loader ts-node/esm src/bot.ts",
+        "dev": "nodemon",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc"
     },
     "author": "roynulrohan",
     "license": "MIT",
@@ -21,13 +21,13 @@
         "discord.js": "^14.8.0",
         "dotenv": "^8.6.0",
         "ffmpeg-static": "^5.1.0",
-        "node": "^16.19.1",
-        "ts-node": "^10.9.1"
+        "node": "^16.19.1"
     },
     "devDependencies": {
-        "pm2": "^5.3.0",
         "nodemon": "^2.0.21",
-        "typescript": "^4.9.5",
-        "python": "^0.0.4"
+        "pm2": "^5.3.0",
+        "python": "^0.0.4",
+        "ts-node": "^10.9.2",
+        "typescript": "^4.9.5"
     }
 }

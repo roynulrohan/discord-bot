@@ -1,5 +1,5 @@
 export default class CooldownController {
-    static guildCooldown = [];
+    static guildCooldown: string[] = [];
     static cooldownTime = 0;
 
     static applyCooldown(targetGuildId: string) {

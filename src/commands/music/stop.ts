@@ -1,7 +1,7 @@
-import stopEmbed from '../../embeds/music/stopEmbed.js';
-import GuildQueueController from '../../controllers/guildQueueController.js';
-import checkMemberName from '../../utils/checkMemberName.js';
 import { Client, CommandInteraction, GuildMember } from 'discord.js';
+import GuildQueueController from '../../controllers/guildQueueController';
+import stopEmbed from '../../embeds/music/stopEmbed';
+import checkMemberName from '../../utils/checkMemberName';
 
 export default {
     name: 'stop',

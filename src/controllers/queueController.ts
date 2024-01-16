@@ -1,8 +1,8 @@
-import { GuildQueue } from 'discord-player';
-import { Message } from 'discord.js';
-import { getDisabledPlayButtonRow, getPlayButtonRow } from '../embeds/music/buttonRowEmbed.js';
-import { getQueueEmptyEmbed } from '../embeds/music/exceptionsEmbed.js';
-import { getPlayPlaylistEmbed } from '../embeds/music/playEmbed.js';
+import { GuildQueue, RawTrackData } from 'discord-player';
+import { Message, MessageReplyOptions } from 'discord.js';
+import { getDisabledPlayButtonRow, getPlayButtonRow } from '../embeds/music/buttonRowEmbed';
+import { getQueueEmptyEmbed } from '../embeds/music/exceptionsEmbed';
+import { getPlayPlaylistEmbed } from '../embeds/music/playEmbed';
 
 export default class QueueController {
     constructor() {}
@@ -13,10 +13,10 @@ export default class QueueController {
     currentTrackIndex = 0;
     nextTrackIndex = this.currentTrackIndex + 1;
 
-    currentTrack = {};
+    currentTrack: RawTrackData | undefined;
 
     anyPlaylistOngoing = false;
-    playlists = [];
+    playlists: any[] = [];
     movingIntoPlaylist = false;
     playlistTrackCounter = 0;
 
@@ -25,7 +25,7 @@ export default class QueueController {
     moveActiveRow(lastTrack = false) {
         const currentReply: Message = this.queueReply[this.currentTrackIndex];
 
-        currentReply.edit(getDisabledPlayButtonRow());
+        currentReply.edit({ components: [getDisabledPlayButtonRow()] });
 
         if (lastTrack) return;
 
@@ -33,7 +33,7 @@ export default class QueueController {
 
         const embedUpdate = getPlayButtonRow(true);
 
-        nextTrackReply.edit(embedUpdate);
+        nextTrackReply.edit({ components: [embedUpdate] });
 
         if (this.movingIntoPlaylist && this.anyPlaylistOngoing) {
             this.movingIntoPlaylist = false;
@@ -74,7 +74,7 @@ export default class QueueController {
             }
 
             if (!(!this.queueReply[this.nextTrackIndex] && !this.anyPlaylistOngoing)) {
-                this.currentTrack = queue.history.queue.__current.raw;
+                this.currentTrack = queue.history.queue.currentTrack?.raw;
             }
 
             if (this.anyPlaylistOngoing) {
@@ -86,7 +86,7 @@ export default class QueueController {
                         this.playlists[0].author,
                         this.playlistTrackCounter + 1,
                         this.playlists[0].addedBy,
-                        this.currentTrack
+                        this.currentTrack!
                     )
                 );
             }
@@ -102,7 +102,7 @@ export default class QueueController {
                     this.moveActiveRow(true);
 
                     if (!this.stopCommandIssued) {
-                        this.queueReply[this.currentTrackIndex].reply(getQueueEmptyEmbed());
+                        this.queueReply[this.currentTrackIndex].reply(getQueueEmptyEmbed() as MessageReplyOptions);
                     } else {
                         this.stopCommandIssued = false;
                     }
@@ -114,8 +114,8 @@ export default class QueueController {
                     this.anyPlaylistOngoing = false;
                     this.playlists = [];
                     this.movingIntoPlaylist = false;
-                    this.playlistTrackCountethis;
-                    this.currentTrack = {};
+                    this.playlistTrackCounter;
+                    this.currentTrack = undefined;
                 }
             }
         });

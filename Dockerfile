@@ -1,17 +1,15 @@
-FROM node:17-slim
+FROM node:17-alpine
+WORKDIR /usr/local/apps/myapp/dev
 
-RUN apt-get update || : && apt-get install python -y
+COPY package.json ./
+RUN npm install && npm cache clean --force
 
-WORKDIR /usr/src/app/
-
-COPY package*.json ./
-
-RUN npm i
+COPY tsconfig.json ./
 
 COPY src ./src
-
 COPY .env ./
 
-RUN ls
+EXPOSE ${PORT}
 
-CMD ["npm", "start"]
+RUN npm run build
+CMD ["npm", "run", "start"]

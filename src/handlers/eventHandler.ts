@@ -1,12 +1,11 @@
 import { Client, REST } from 'discord.js';
-import { join } from 'path';
+import path from 'path';
 
 import getAllFilesFromPath from '../utils/getAllFilesFromPath';
-import getCurrentPath from '../utils/getCurrentPath';
 
 export default (client: Client, rest: REST) => {
-    const __dirname = getCurrentPath(import.meta.url);
-    const eventFolders = getAllFilesFromPath(join(__dirname, '..', 'events'), true);
+    const foldersPath = path.join(__dirname, '..', 'events');
+    const eventFolders = getAllFilesFromPath(foldersPath, true);
 
     for (const eventFolder of eventFolders) {
         const eventFiles = getAllFilesFromPath(eventFolder);

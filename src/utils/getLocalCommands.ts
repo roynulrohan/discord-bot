@@ -1,10 +1,9 @@
-import { join } from 'path';
-import getAllFilesFromPath from './getAllFilesFromPath.js';
-import getCurrentPath from './getCurrentPath.js';
+import path from 'path';
+import getAllFilesFromPath from './getAllFilesFromPath';
 
 export default async (exceptions = []) => {
-    const __dirname = getCurrentPath(import.meta.url);
-    const commandCategories = getAllFilesFromPath(join(__dirname, '..', 'commands'), true);
+    const foldersPath = path.join(__dirname, '..', 'commands');
+    const commandCategories = getAllFilesFromPath(foldersPath, true);
     const localCommands = [];
 
     for (const commandCategory of commandCategories) {

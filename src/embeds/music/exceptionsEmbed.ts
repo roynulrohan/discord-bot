@@ -14,7 +14,7 @@ export function getQueueEmptyEmbed() {
                 title: 'Meowdy Partner - Music',
             },
         ],
-    };
+    } as InteractionReplyOptions;
 }
 
 export function getCooldownEmbed() {

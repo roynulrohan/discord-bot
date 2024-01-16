@@ -1,7 +1,11 @@
-import QueueController from './queueController.js';
+import QueueController from './queueController';
 
+type QueueControllerObj = {
+    guildId: string;
+    queueController: QueueController;
+};
 export default class GuildQueueController {
-    static queueControllers: any = [];
+    static queueControllers: QueueControllerObj[] = [];
 
     static getGuildQueueController(targetGuildId: string) {
         let queueController = GuildQueueController.queueControllers.find((obj: any) => obj.guildId === targetGuildId);

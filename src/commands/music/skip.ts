@@ -1,6 +1,6 @@
 import { Client, CommandInteraction, GuildMember } from 'discord.js';
-import skipEmbed from '../../embeds/music/skipEmbed.js';
-import checkMemberName from '../../utils/checkMemberName.js';
+import skipEmbed from '../../embeds/music/skipEmbed';
+import checkMemberName from '../../utils/checkMemberName';
 
 export default {
     name: 'skip',

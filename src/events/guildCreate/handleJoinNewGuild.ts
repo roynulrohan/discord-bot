@@ -1,7 +1,7 @@
 import { Client, REST, Routes } from 'discord.js';
 
-import config from '../../config.js';
-import getLocalCommands from '../../utils/getLocalCommands.js';
+import config from '../../config';
+import getLocalCommands from '../../utils/getLocalCommands';
 
 type Params = {
     client: Client;

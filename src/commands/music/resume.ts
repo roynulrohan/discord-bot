@@ -1,8 +1,8 @@
 import { Client, CommandInteraction, GuildMember } from 'discord.js';
-import GuildQueueController from '../../controllers/guildQueueController.js';
-import { getPlayButtonRow } from '../../embeds/music/buttonRowEmbed.js';
-import resumeEmbed from '../../embeds/music/resumeEmbed.js';
-import checkMemberName from '../../utils/checkMemberName.js';
+import GuildQueueController from '../../controllers/guildQueueController';
+import { getPlayButtonRow } from '../../embeds/music/buttonRowEmbed';
+import resumeEmbed from '../../embeds/music/resumeEmbed';
+import checkMemberName from '../../utils/checkMemberName';
 
 export default {
     name: 'resume',
@@ -34,7 +34,7 @@ export default {
 
             const currentReply = queueController.queueReply[queueController.currentTrackIndex];
 
-            currentReply.edit(getPlayButtonRow(true));
+            currentReply.edit({ components: [getPlayButtonRow(true)] });
 
             return await interaction.reply(
                 resumeEmbed(queue.currentTrack?.raw.title!, checkMemberName((interaction.member as GuildMember).nickname!, interaction.member?.user.username!))
