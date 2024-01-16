@@ -1,6 +1,6 @@
 import { QueryType } from 'discord-player';
 import { ComponentType } from 'discord.js';
-import { getPlayPlaylistEmbed, getPlaySongEmbed, getPlaylistAddedEmbed } from '../../embeds/music/playEmbed.js';
+import { getPlayPlaylistEmbed, getPlaySongEmbed, getPlaylistAddedEmbed, getPlaySongQueuedEmbed } from '../../embeds/music/playEmbed.js';
 import skipEmbed from '../../embeds/music/skipEmbed.js';
 import stopEmbed from '../../embeds/music/stopEmbed.js';
 import isYoutubePlaylist from '../../utils/urlTools/isYoutubePlaylist.js';
@@ -82,8 +82,8 @@ export default {
             });
         }
 
-        if (result.tracks.length > 1) {
-            playlist = result._data.playlist;
+        if (result.hasPlaylist()) {
+            playlist = result.playlist;
 
             await queue.addTrack(playlist);
 
