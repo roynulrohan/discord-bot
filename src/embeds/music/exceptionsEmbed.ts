@@ -10,7 +10,7 @@ export function getQueueEmptyEmbed() {
                 },
                 color: 15418782,
                 type: 'rich',
-                description: `The playlist has come to an end.`,
+                description: `The queue has come to an end.`,
                 title: 'Meowdy Partner - Music',
             },
         ],
