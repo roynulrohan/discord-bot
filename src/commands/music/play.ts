@@ -14,7 +14,7 @@ import isUserConnectedToBotChannel from '../../utils/isUserConnectedToBotChannel
 
 export default {
     name: 'play',
-    description: 'Play a song from YouTube.',
+    description: 'Play a song',
     options: [
         {
             type: 3,
