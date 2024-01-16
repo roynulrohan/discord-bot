@@ -1,11 +1,13 @@
+import { Playlist, RawTrackData, Track } from 'discord-player';
+import { InteractionReplyOptions } from 'discord.js';
 import { getPlayButtonRow } from './buttonRowEmbed.js';
 
-export function getPlaySongEmbed(channel, isPlaying, song, addedBy) {
+export function getPlaySongEmbed(channel: string, isPlaying: boolean, song: Track<unknown>, addedBy: string) {
     const buttonRow = getPlayButtonRow();
 
     const embed = {
         footer: {
-            text: `Duration: ${song.duration}\nChannel: #${channel}\nAdded by : @${addedBy}`,
+            text: `Duration: ${song.duration}\nChannel: #${channel}.\nAdded by : @${addedBy}`,
             icon_url: '',
         },
         image: {
@@ -15,64 +17,44 @@ export function getPlaySongEmbed(channel, isPlaying, song, addedBy) {
             url: '',
         },
         author: {
-            name: `Now Playing`,
+            name: 'Slay_404',
             icon_url: '',
         },
         fields: [],
         color: 15418782,
         type: 'rich',
-        description: ``,
-        title: `**[${song.title}](${song.url})**`,
+        description: `🎶 | Started playing: **${song.title}**!`,
+        title: 'Meowdy Partner - Music',
     };
 
     return !isPlaying
-        ? {
+        ? ({
               embeds: [embed],
               components: [buttonRow],
-          }
-        : {
+          } as InteractionReplyOptions)
+        : ({
               embeds: [embed],
-          };
+          } as InteractionReplyOptions);
 }
 
-export function getPlaySongQueuedEmbed(channel, isPlaying, song, addedBy) {
-    const embed = {
-        footer: {
-            text: `Duration: ${song.duration}\nChannel: #${channel}\nAdded by : @${addedBy}`,
-            icon_url: '',
-        },
-        image: {
-            url: song.thumbnail,
-        },
-        thumbnail: {
-            url: '',
-        },
-        author: {
-            name: `${!isPlaying ? 'Added to Queue' : 'Now Playing'}`,
-            icon_url: '',
-        },
-        fields: [],
-        color: 15418782,
-        type: 'rich',
-        description: ``,
-        title: `**[${song.title}](${song.url})**`,
-    };
-
-    return {
-        embeds: [embed],
-    };
-}
-
-export function getPlayPlaylistEmbed(playlistTitle, playlistLength, playlistUrl, playlistAuthor, playlistCurrentPosition, addedBy, currentTrack) {
+export function getPlayPlaylistEmbed(
+    playlistTitle: string,
+    playlistLength: number,
+    playlistUrl: string,
+    playlistAuthor: string,
+    playlistCurrentPosition: number,
+    addedBy: string,
+    currentTrack: RawTrackData
+) {
     const buttonRow = getPlayButtonRow();
 
     const embed = {
         footer: {
-            text: `Duration: ${currentTrack.durationFormatted}\nProgress: song ${playlistCurrentPosition} by ${playlistLength}.\nAuthor: ${playlistAuthor}.\nAdded by: ${addedBy}.`,
+            text: `Duration: ${currentTrack.duration}\nProgress: song ${playlistCurrentPosition} by ${playlistLength}.\nAuthor: ${playlistAuthor}.\nAdded by: ${addedBy}.`,
             icon_url: '',
         },
         image: {
-            url: currentTrack.thumbnail.url,
+            url: currentTrack.thumbnail,
         },
         thumbnail: {
             url: '',
@@ -91,10 +73,10 @@ export function getPlayPlaylistEmbed(playlistTitle, playlistLength, playlistUrl,
     return {
         embeds: [embed],
         components: [buttonRow],
-    };
+    } as InteractionReplyOptions;
 }
 
-export function getPlaylistAddedEmbed(playlist, addedBy) {
+export function getPlaylistAddedEmbed(playlist: Playlist, addedBy: string) {
     const embed = {
         footer: {
             text: `Size: ${playlist.tracks.length} songs.\nAuthor: ${playlist.author.name}.\nAdded by: ${addedBy}.`,
@@ -119,5 +101,5 @@ export function getPlaylistAddedEmbed(playlist, addedBy) {
 
     return {
         embeds: [embed],
-    };
+    } as InteractionReplyOptions;
 }

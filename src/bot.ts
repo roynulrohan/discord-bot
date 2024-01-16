@@ -3,9 +3,9 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import { Player } from 'discord-player';
 
 import eventHandler from './handlers/eventHandler.js'; //temp
-import config from './config.js';
+import config from './config';
 
-const token = config.token;
+const token = config.token!;
 const rest = new REST({ version: '10' }).setToken(token);
 const client = new Client({
     intents: [
