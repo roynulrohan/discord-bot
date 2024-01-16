@@ -1,3 +1,5 @@
+import { InteractionReplyOptions } from 'discord.js';
+
 export default (songTitle: string, userNickname: string) => {
     return {
         embeds: [
@@ -16,5 +18,5 @@ export default (songTitle: string, userNickname: string) => {
                 title: 'Meowdy Partner - Music',
             },
         ],
-    };
+    } as InteractionReplyOptions;
 };

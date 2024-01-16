@@ -1,5 +1,5 @@
 import { GuildQueue, Playlist, QueryType } from 'discord-player';
-import { Client, ClientUser, CommandInteraction, ComponentType, GuildMember, InteractionReplyOptions, MessagePayload } from 'discord.js';
+import { Client, ClientUser, CommandInteraction, ComponentType, Guild, GuildMember, InteractionReplyOptions, MessagePayload } from 'discord.js';
 import { getPlayPlaylistEmbed, getPlaySongEmbed, getPlaylistAddedEmbed } from '../../embeds/music/playEmbed.js';
 import skipEmbed from '../../embeds/music/skipEmbed.js';
 import stopEmbed from '../../embeds/music/stopEmbed.js';
@@ -67,7 +67,7 @@ export default {
         if (!queue.connection) await queue.connect((interaction.member as GuildMember).voice.channel!);
 
         let embed: string | MessagePayload | InteractionReplyOptions;
-        let playlist: Playlist;
+        let playlist: Playlist | undefined;
 
         const songField = interaction.options.get('song')?.value as string;
 
@@ -149,145 +149,157 @@ export default {
             });
 
             collector.on('collect', async (interaction) => {
-                
-                // if (CooldownController.isOnCooldown(interaction.guildId)) {
-                //     return interaction.reply(getCooldownEmbed());
-                // }
+                if (CooldownController.isOnCooldown(interaction.guildId!)) {
+                    return void interaction.reply(getCooldownEmbed());
+                }
 
-                // if (!queue) {
-                //     return await interaction.reply({
-                //         content: 'There are no songs in the queue.',
-                //         ephemeral: true,
-                //     });
-                // }
+                if (!queue) {
+                    return void (await interaction.reply({
+                        content: 'There are no songs in the queue.',
+                        ephemeral: true,
+                    }));
+                }
 
-                // if (interaction.member.voice.channel) {
-                //     if (!isUserConnectedToBotChannel(client.user.id, interaction.member.voice.channel)) {
-                //         return await interaction.reply({
-                //             content: 'You must be on the same channel as the bot!',
-                //             ephemeral: true,
-                //         });
-                //     }
-                // } else {
-                //     return await interaction.reply({
-                //         content: 'You need to be on the server to interact with the bot!',
-                //         ephemeral: true,
-                //     });
-                // }
+                if ((interaction.member as GuildMember).voice.channel) {
+                    if (!isUserConnectedToBotChannel(client.user?.id!, (interaction.member as GuildMember).voice.channel!)) {
+                        return void (await interaction.reply({
+                            content: 'You must be on the same channel as the bot!',
+                            ephemeral: true,
+                        }));
+                    }
+                } else {
+                    return void (await interaction.reply({
+                        content: 'You need to be on the server to interact with the bot!',
+                        ephemeral: true,
+                    }));
+                }
 
-                // CooldownController.applyCooldown(interaction.guildId);
+                CooldownController.applyCooldown(interaction.guildId!);
 
-                // if (interaction.customId == 'stop') {
-                //     try {
-                //         queueController.stopCommandIssued = true;
+                if (interaction.customId == 'stop') {
+                    try {
+                        queueController.stopCommandIssued = true;
 
-                //         queue.delete();
+                        queue.delete();
 
-                //         return interaction.reply(stopEmbed(checkMemberName(interaction.member.nickname, interaction.member.user.username)));
-                //     } catch (error) {
-                //         console.log(
-                //             `\nError while stop button was pressed on the server: ${interaction.guild.name} / Id: ${interaction.guild.id}. Error: ${error}`
-                //         );
-                //         return;
-                //     }
-                // }
+                        return void interaction.reply(
+                            stopEmbed(checkMemberName((interaction.member as GuildMember).nickname!, (interaction.member as GuildMember).user.username))
+                        );
+                    } catch (error) {
+                        console.log(
+                            `\nError while stop button was pressed on the server: ${interaction.guild?.name} / Id: ${
+                                (interaction.guild as Guild).id
+                            }. Error: ${error}`
+                        );
+                        return;
+                    }
+                }
 
-                // if (interaction.customId == 'skip') {
-                //     try {
-                //         queue.node.skip();
+                if (interaction.customId == 'skip') {
+                    try {
+                        queue.node.skip();
 
-                //         await interaction.reply(
-                //             skipEmbed(queue.currentTrack.raw.title, checkMemberName(interaction.member.nickname, interaction.member.user.username))
-                //         );
+                        await interaction.reply(
+                            skipEmbed(
+                                queue.currentTrack?.raw.title!,
+                                checkMemberName((interaction.member as GuildMember).nickname!, (interaction.member as GuildMember).user.username)
+                            )
+                        );
 
-                //         setTimeout(async () => {
-                //             await interaction.deleteReply();
+                        setTimeout(async () => {
+                            await interaction.deleteReply();
 
-                //             return;
-                //         }, 2500);
-                //     } catch (error) {
-                //         console.log(
-                //             `\nError while skip button was pressed on the server: ${interaction.guild.name} / Id: ${interaction.guild.id}. Error: ${error}`
-                //         );
-                //         return;
-                //     }
-                // }
+                            return;
+                        }, 2500);
+                    } catch (error) {
+                        console.log(
+                            `\nError while skip button was pressed on the server: ${interaction.guild?.name} / Id: ${interaction.guild?.id}. Error: ${error}`
+                        );
+                        return;
+                    }
+                }
 
-                // if (interaction.customId == 'pause') {
-                //     try {
-                //         if (queue.node.isPlaying()) {
-                //             queue.node.pause();
+                if (interaction.customId == 'pause') {
+                    try {
+                        if (queue.node.isPlaying()) {
+                            queue.node.pause();
 
-                //             const currentReply = queueController.queueReply[queueController.currentTrackIndex];
+                            const currentReply = queueController.queueReply[queueController.currentTrackIndex];
 
-                //             currentReply.edit(getPausedButtonRow());
+                            currentReply.edit(getPausedButtonRow());
 
-                //             await interaction.reply(
-                //                 pauseEmbed(queue.currentTrack.raw.title, checkMemberName(interaction.member.nickname, interaction.member.user.username))
-                //             );
+                            await interaction.reply(
+                                pauseEmbed(
+                                    queue.currentTrack?.raw.title!,
+                                    checkMemberName((interaction.member as GuildMember).nickname!, (interaction.member as GuildMember).user.username)
+                                )
+                            );
 
-                //             setTimeout(async () => {
-                //                 await interaction.deleteReply();
+                            setTimeout(async () => {
+                                await interaction.deleteReply();
 
-                //                 return;
-                //             }, 2500);
-                //         } else {
-                //             await interaction.reply({
-                //                 content: 'Bot is already paused!',
-                //                 ephemeral: true,
-                //             });
+                                return;
+                            }, 2500);
+                        } else {
+                            await interaction.reply({
+                                content: 'Bot is already paused!',
+                                ephemeral: true,
+                            });
 
-                //             setTimeout(async () => {
-                //                 await interaction.deleteReply();
+                            setTimeout(async () => {
+                                await interaction.deleteReply();
 
-                //                 return;
-                //             }, 2500);
-                //         }
-                //     } catch (error) {
-                //         console.log(
-                //             `\nError while pause button was pressed on the server: ${interaction.guild.name} / Id: ${interaction.guild.id}. Error: ${error}`
-                //         );
-                //         return;
-                //     }
-                // }
+                                return;
+                            }, 2500);
+                        }
+                    } catch (error) {
+                        console.log(
+                            `\nError while pause button was pressed on the server: ${interaction.guild?.name} / Id: ${interaction.guild?.id}. Error: ${error}`
+                        );
+                        return;
+                    }
+                }
 
-                // if (interaction.customId == 'resume') {
-                //     try {
-                //         if (queue.node.isPaused()) {
-                //             queue.node.resume();
+                if (interaction.customId == 'resume') {
+                    try {
+                        if (queue.node.isPaused()) {
+                            queue.node.resume();
 
-                //             const currentReply = queueController.queueReply[queueController.currentTrackIndex];
+                            const currentReply = queueController.queueReply[queueController.currentTrackIndex];
 
-                //             currentReply.edit(getPlayButtonRow(true));
+                            currentReply.edit(getPlayButtonRow(true));
 
-                //             await interaction.reply(
-                //                 resumeEmbed(queue.currentTrack.raw.title, checkMemberName(interaction.member.nickname, interaction.member.user.username))
-                //             );
+                            await interaction.reply(
+                                resumeEmbed(
+                                    queue.currentTrack?.raw.title!,
+                                    checkMemberName((interaction.member as GuildMember).nickname!, (interaction.member as GuildMember).user.username)
+                                )
+                            );
 
-                //             setTimeout(async () => {
-                //                 await interaction.deleteReply();
+                            setTimeout(async () => {
+                                await interaction.deleteReply();
 
-                //                 return;
-                //             }, 2500);
-                //         } else {
-                //             await interaction.reply({
-                //                 content: 'Bot is already playing!',
-                //                 ephemeral: true,
-                //             });
+                                return;
+                            }, 2500);
+                        } else {
+                            await interaction.reply({
+                                content: 'Bot is already playing!',
+                                ephemeral: true,
+                            });
 
-                //             setTimeout(async () => {
-                //                 await interaction.deleteReply();
+                            setTimeout(async () => {
+                                await interaction.deleteReply();
 
-                //                 return;
-                //             }, 2500);
-                //         }
-                //     } catch (error) {
-                //         console.log(
-                //             `\nError while resume button was pressed on the server: ${interaction.guild.name} / Id: ${interaction.guild.id}. Error: ${error}`
-                //         );
-                //         return;
-                //     }
-                // }
+                                return;
+                            }, 2500);
+                        }
+                    } catch (error) {
+                        console.log(
+                            `\nError while resume button was pressed on the server: ${interaction.guild?.name} / Id: ${interaction.guild?.id}. Error: ${error}`
+                        );
+                        return;
+                    }
+                }
             });
 
             return;
