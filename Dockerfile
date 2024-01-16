@@ -5,7 +5,7 @@ RUN apt-get update || : && apt-get install python -y
 WORKDIR /usr/local/apps/myapp
 
 COPY package.json ./
-RUN npm install && npm cache clean --force
+RUN npm install
 
 COPY tsconfig.json ./
 
@@ -17,8 +17,4 @@ COPY .env ./
 
 EXPOSE ${PORT}
 
-RUN npm i -g typescript
-
-RUN tsc
-
-CMD ["node", "./build/bot.js"]
+CMD ["npm", "start"]
