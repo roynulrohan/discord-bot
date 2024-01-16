@@ -3,6 +3,9 @@
     "exclude": ["node_modules"],
     "ts-node": { "files": true },
     "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./build",
+        "types": ["node"],
         "target": "ES2022",
         "module": "CommonJS",
         "moduleResolution": "node",

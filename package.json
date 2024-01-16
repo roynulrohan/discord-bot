@@ -7,7 +7,7 @@
         "start": "ts-node --files --loader ts-node/esm src/bot.ts",
         "dev": "nodemon",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsc"
+        "build": "tsc --build"
     },
     "author": "roynulrohan",
     "license": "MIT",
