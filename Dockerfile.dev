@@ -5,16 +5,15 @@ RUN apt-get update || : && apt-get install python -y
 WORKDIR /usr/local/apps/myapp
 
 COPY package.json ./
-RUN npm install
+RUN npm install && npm cache clean --force
+ENV PATH=/usr/local/myapp/node_modules/.bin:$PATH
 
+WORKDIR /usr/local/apps/myapp/dev
 COPY tsconfig.json ./
 
 COPY src ./src
-
-COPY @types ./
-
 COPY .env ./
 
 EXPOSE ${PORT}
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

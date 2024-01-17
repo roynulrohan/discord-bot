@@ -6,5 +6,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - PORT=${PORT}
     environment:
       - TOKEN=${TOKEN}
+    ports:
+      - 3001:${PORT}
+    env_file:
+      - .env
