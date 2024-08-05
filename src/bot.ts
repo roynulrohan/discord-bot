@@ -28,9 +28,11 @@ client.player = new Player(client, {
 
 client.player.extractors.register(YoutubeiExtractor, {
     streamOptions: {
-        useClient: 'ANDROID'
-    }
+        useClient: 'ANDROID',
+    },
 });
+
+client.player.extractors.loadDefault((ext) => ext !== 'YouTubeExtractor');
 
 eventHandler(client, rest);
 
