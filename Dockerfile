@@ -1,6 +1,6 @@
-FROM node:17-slim
+FROM node:20.5.0
 
-RUN apt-get update || : && apt-get install python -y
+RUN apt-get update && apt-get install -y python3 python3-pip
 
 WORKDIR /usr/local/apps/myapp
 
@@ -13,8 +13,8 @@ COPY src ./src
 
 COPY @types ./
 
-COPY .env ./
+RUN npm run build
 
 EXPOSE ${PORT}
 
-CMD ["npm", "start"]
+CMD ["node", "build/bot.js"]

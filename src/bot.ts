@@ -4,6 +4,7 @@ import { Player } from 'discord-player';
 
 import eventHandler from './handlers/eventHandler'; //temp
 import config from './config';
+import { YoutubeiExtractor } from 'discord-player-youtubei';
 
 const token = config.token!;
 const rest = new REST({ version: '10' }).setToken(token);
@@ -25,7 +26,11 @@ client.player = new Player(client, {
     },
 });
 
-client.player.extractors.loadDefault();
+client.player.extractors.register(YoutubeiExtractor, {
+    streamOptions: {
+        useClient: 'ANDROID'
+    }
+});
 
 eventHandler(client, rest);
 
