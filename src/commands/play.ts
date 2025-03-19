@@ -65,9 +65,10 @@ const play: BotCommand = {
             // Play the song in the voice channel
             const result = await player.play(voiceChannel, query, {
                 nodeOptions: {
-                    metadata: { channel: interaction.channel }, // Store text channel as metadata on the queue
+                    metadata: { channel: interaction.channel, voiceChannel }, // Store text channel as metadata on the queue
                     selfDeaf: false,
                 },
+                requestedBy: interaction.user,
             });
 
             // Reply to the user that the song has been added to the queue

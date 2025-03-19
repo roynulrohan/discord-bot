@@ -1,18 +1,17 @@
 import { Player } from 'discord-player';
-import { EmbedBuilder, TextChannel } from 'discord.js';
+import { EmbedBuilder, TextChannel, VoiceChannel } from 'discord.js';
 
 export function registerPlayerEvents(player: Player): void {
   // When a track starts playing
   player.events.on('playerStart', (queue, track) => {
     try {
       const channel = queue.metadata.channel as TextChannel;
-
+      const voiceChannel = queue.metadata.voiceChannel as VoiceChannel;
       const embed = new EmbedBuilder()
         .setColor(15418782)
         .setTitle(track.title)
-        .setDescription(track.author).setURL(track.url).setFields({ name: 'Duration', value: track.duration, inline: true }, { name: 'Channel', value: `#${channel}`, inline: true }, { name: 'Added by', value: `<@${track.requestedBy?.id || 'Unknown'}>`, inline: true })
+        .setDescription(track.author).setURL(track.url).setFooter({ text: `Duration: ${track.duration}\nChannel: ${voiceChannel}\nAdded by: <@${track.requestedBy?.id || 'Unknown'}>` })
         .setTimestamp();
-
       // Only set thumbnail if it exists and is valid
       if (track.thumbnail && track.thumbnail.length > 0) {
         embed.setImage(track.thumbnail);
@@ -42,6 +41,10 @@ export function registerPlayerEvents(player: Player): void {
     } catch (err) {
       console.error('Error handling player error event:', err);
     }
+  });
+
+  player.events.on('playerError', (queue, error) => {
+    console.error(`Error in queue for guild ${queue.guild.name}:`, error);
   });
 
   // When the queue finishes

@@ -35,7 +35,9 @@ client.player = player;
 
 // Load player extractors for different sources (YouTube, Spotify, etc.)
 player.extractors.loadMulti(DefaultExtractors);
-player.extractors.register(YoutubeiExtractor, {})
+player.extractors.register(YoutubeiExtractor, {
+    authentication: process.env.YT_TOKEN,
+})
 
 // Register Discord and Player events
 registerDiscordEvents(client);
