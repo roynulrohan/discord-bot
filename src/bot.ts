@@ -1,15 +1,12 @@
-import { DefaultExtractors } from '@discord-player/extractor';
+import { DefaultExtractors, SoundCloudExtractor, VimeoExtractor } from '@discord-player/extractor';
 import { Player } from 'discord-player';
+import { YoutubeiExtractor } from 'discord-player-youtubei';
 import { Client, GatewayIntentBits } from 'discord.js';
 import config from './config';
-import { registerCommands } from './utils/commandHandler';
 import { registerDiscordEvents } from './events/discordEvents';
 import { registerPlayerEvents } from './events/playerEvents';
 import { ClientWithPlayer } from './types';
-import { SoundCloudExtractor } from '@discord-player/extractor';
-import { VimeoExtractor } from '@discord-player/extractor';
-import play from 'play-dl'; // Required for YouTube and Spotify support
-import { YoutubeiExtractor } from 'discord-player-youtubei';
+import { registerCommands } from './utils/commandHandler';
 
 // Get bot token and client ID from config
 const token = config.token!;
@@ -31,22 +28,14 @@ const player = new Player(client, {
     blockExtractors: [
         SoundCloudExtractor.identifier,
         VimeoExtractor.identifier,
-    ]
+    ],
 });
+
 client.player = player;
 
 // Load player extractors for different sources (YouTube, Spotify, etc.)
 player.extractors.loadMulti(DefaultExtractors);
 player.extractors.register(YoutubeiExtractor, {})
-
-// Set up play-dl for YouTube
-if (process.env.YT_COOKIE) {
-    play.setToken({
-        youtube: {
-            cookie: process.env.YT_COOKIE
-        }
-    });
-}
 
 // Register Discord and Player events
 registerDiscordEvents(client);
