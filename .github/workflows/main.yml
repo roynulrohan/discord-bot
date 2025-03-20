@@ -1,0 +1,13 @@
+name: Deploy to Jenkins
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  trigger-jenkins:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Jenkins Build
+        run: |
+          curl -X POST "https://jenkins.roynul.com/job/discord-bot/build?token=${{ secrets.JENKINS_TOKEN }}"
