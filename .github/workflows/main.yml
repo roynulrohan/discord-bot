@@ -11,8 +11,8 @@ jobs:
       - name: Trigger Jenkins Build
         uses: joshlk/jenkins-githubaction@V0.0.1
         with:
-          url: "https://jenkins.roynul.com"
-          job_name: "discord-bot"
+          url: ${{ secrets.JENKINS_URL }}
+          job_name: discord-bot
           username: ${{ secrets.JENKINS_USER }}
           api_token: ${{ secrets.JENKINS_TOKEN }}
           wait: true
