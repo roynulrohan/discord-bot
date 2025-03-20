@@ -2,12 +2,18 @@ name: Deploy to Jenkins
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master ]  # or 'main' depending on your default branch
 
 jobs:
-  trigger-jenkins:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Jenkins Build
-        run: |
-          curl -X POST "https://jenkins.roynul.com/job/discord-bot/build?token=${{ secrets.JENKINS_TOKEN }}"
+        uses: joshlk/jenkins-githubaction@V0.0.1
+        with:
+          url: "https://jenkins.roynul.com"
+          job_name: "discord-bot"
+          username: ${{ secrets.JENKINS_USERNAME }}
+          api_token: ${{ secrets.JENKINS_TOKEN }}
+          wait: true
+          timeout: 300
