@@ -1,13 +1,15 @@
-FROM node:20.5.0
+FROM node:22
 
-WORKDIR /usr/local/apps/myapp
+WORKDIR /app
 
 COPY package.json ./
 
-RUN npm install
+RUN npm ci
 
-COPY src ./src
+COPY . .
 
-EXPOSE ${PORT}
+RUN npm run build
+
+EXPOSE 3000
 
 CMD ["node", "build/bot.js"]
